@@ -1,0 +1,14 @@
+﻿
+<script src="Scripts/angular.min.js"></script>
+<script src="App/Animal.js"></script>
+
+<div ng-app="animalApp">
+    <div ng-controller="animalController">
+        <h2 id="score">Total Score: 0</h2>
+        <img id="animalImage" src="" /><br />
+        <input type="button" value="{{alternatives[0]}}" ng-click="checkAnswer(0)" />
+        <input type="button" value="{{alternatives[1]}}" ng-click="checkAnswer(1)" />
+        <input type="button" value="{{alternatives[2]}}" ng-click="checkAnswer(2)" />
+        <p ng-init="randomAnimal()" id="response"></p>
+    </div>
+</div>
