@@ -17,8 +17,9 @@
                 <label>Words</label>
                 <ul class="list-inline list-unstyled">
                     <li ng-repeat="word in $ctrl.shuffledWords track by $index">
-                        <label ng-if="$ctrl.inAnswer(word)" class="label label-success">{{ word }}</label>
-                        <label ng-if="!$ctrl.inAnswer(word)" class="label label-info">{{ word }}</label>
+                        <button ng-if="$ctrl.answerContains(word) && $ctrl.wordInRightPlace(word)" class="btn btn-success" ng-click="$ctrl.updateAnswer(word)">{{ word }}</button>
+                        <button ng-if="$ctrl.answerContains(word) && !$ctrl.wordInRightPlace(word)" class="btn btn-warning" ng-click="$ctrl.updateAnswer(word)">{{ word }}</button>
+                        <button ng-if="!$ctrl.answerContains(word)" class="btn btn-default" ng-click="$ctrl.updateAnswer(word)">{{ word }}</button>
                     </li>
                 </ul>
             </fieldset>
