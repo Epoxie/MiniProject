@@ -18,6 +18,7 @@ namespace MiniProject
 
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                     "~/Scripts/angular.min.js",
+                    "~/App/Setup.js",
                     "~/App/Animal.js",
                     "~/App/SentenceBuilder.js"));
 

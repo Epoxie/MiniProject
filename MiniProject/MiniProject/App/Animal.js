@@ -4,8 +4,13 @@
 
     var animalController = function ($scope, $http) {
 
-        $scope.initAttempts = function (iterations) {
+        /*$scope.initAttempts = function (iterations) {
             $scope.totalAttempts = iterations;
+        } */ // currently unused code
+
+        $scope.animalInit = function () {
+            $scope.totalAttempts = sessionStorage.getItem("animalVar");
+            $scope.randomAnimal();
         }
 
         $scope.currentAttempt = 1;
@@ -50,10 +55,10 @@
                 {
                     document.getElementById("response").innerHTML = "Correct! You get 1 point!";
                     $scope.score += 1;
-                    document.getElementById("score").innerHTML = "Total Score: " + $scope.score + " of " + $scope.totalAttempts;
                 }
                 else
                     document.getElementById("response").innerHTML = "Wrong! The Correct answer is: " + $scope.alternatives[$scope.correctAnswer];
+                document.getElementById("score").innerHTML = "Total Score: " + $scope.score + " of " + $scope.currentAttempt;
                 $scope.shortTimer();
             }
         }
@@ -74,7 +79,7 @@
         }
 
         $scope.return = function () { // sets the webbpage to be that of homecontroller index or whatever default
-            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Animal/Index/"));
+            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Animal"));
         }
     }
 
