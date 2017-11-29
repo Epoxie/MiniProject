@@ -79,7 +79,7 @@
         }
 
         $scope.return = function () { // sets the webbpage to be that of homecontroller index or whatever default
-            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Animal"));
+            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home"));
         }
     }
 

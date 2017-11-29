@@ -34,7 +34,7 @@
             </fieldset>
         </div>
         <form class="form-group" ng-submit="$ctrl.checkAnswer()">
-            <input required type="text" class="form-control" ng-model="$ctrl.answer" ng-change="$ctrl.checkInput()" placeholder="Enter answer" />
+            <input required id="answer" type="text" class="form-control" ng-model="$ctrl.answer" ng-change="$ctrl.checkInput()" placeholder="Enter answer" />
             <br/>
             <input class="btn btn-success" type="submit" value="Next!" />
         </form>

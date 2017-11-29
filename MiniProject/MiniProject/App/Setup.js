@@ -6,7 +6,12 @@
 
         $scope.animalSetup = function() {
             sessionStorage.animalVar = document.getElementById("animalSelect").value;
-            document.location.href = document.location.href + "/Animal";
+            document.location.href = document.location.href + "Home/AnimalQuiz";
+        }
+
+        $scope.sentenceSetup = function () {
+            sessionStorage.sentenceVar = document.getElementById("sentenceSelect").value;
+            document.location.href = document.location.href + "Home/SentenceBuilder";
         }
 
     }

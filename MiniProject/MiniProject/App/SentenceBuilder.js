@@ -65,6 +65,7 @@
             ];
             vm.score = 0;
             vm.count = 0;
+            vm.Maxcount = 1;
 
             // Checks if the answer contains the current word
             vm.inAnswer = function (value) {
@@ -80,6 +81,7 @@
                 addToElementClassList("startBtn", ["hidden"]);
                 removeFromElementClassList("quizDiv", ["hidden"]);
                 getRandomQuestion();
+                vm.Maxcount = sessionStorage.getItem("sentenceVar") - 1;
             };
 
             // Checks input to see if the user has inputed any invalid words.
@@ -128,6 +130,16 @@
                     else {
                         addToElementClassList("scoreLabel", ["label-warning"]);
                     }
+                }
+
+                // return
+                if (vm.count == vm.Maxcount) {
+                    document.getElementById("answer").readOnly = true;
+                    var interval = setInterval(function myfunction() {
+                        clearInterval(interval); // clears interval
+                        interval = null;
+                        document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home"));       
+                    }, 1000);
                 }
 
                 // Fix things

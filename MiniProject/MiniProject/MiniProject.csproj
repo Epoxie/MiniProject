@@ -155,7 +155,6 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="Controllers\AnimalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SentencesController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -229,7 +228,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Animal\Index.cshtml" />
+    <Content Include="Views\Home\AnimalQuiz.cshtml" />
     <Content Include="Views\Home\SentenceBuilder.cshtml" />
   </ItemGroup>
   <ItemGroup>

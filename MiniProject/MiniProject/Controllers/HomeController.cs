@@ -20,5 +20,11 @@ namespace MiniProject.Controllers
             ViewBag.Title = "Sentence Builder";
             return View();
         }
+
+        public ActionResult AnimalQuiz()
+        {
+            ViewBag.Title = "Animal Quiz";
+            return View();
+        }
     }
 }
