@@ -5,7 +5,7 @@
 <div id="sentenceDiv" class="body-content hidden" ng-app="sentenceBuilder" ng-controller="sentenceBuilderController as $ctrl" ng-init="$ctrl.init()">
     <div>
         <h1>{{ $ctrl.pageTitle }}</h1>
-        <p>{{$ctrl.pageDesc}}</p>
+        <p ng-repeat="row in $ctrl.pageDesc">{{row}}</p>
     </div>
     <div>
         <button id="startBtn" class="btn btn-success disabled" ng-click="$ctrl.startQuiz()">Start!</button>
