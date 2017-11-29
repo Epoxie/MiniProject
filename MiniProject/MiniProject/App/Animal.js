@@ -4,9 +4,12 @@
 
     var animalController = function ($scope, $http) {
 
+        $scope.initAttempts = function (iterations) {
+            $scope.totalAttempts = iterations;
+        }
+
+        $scope.currentAttempt = 1;
         $scope.interval; // the timer used later
-        $scope.totalAttempts = 5; // this is for dynamic number of attempts
-        $scope.currentAttempt = 1; // this too
         $scope.score = 0; // number of successfull attempts
 
         $scope.animalNames = ["Horse", "Dog", "Cat", "Elephant", "Giraffe", "Eagle", "Ostrich"]
@@ -71,7 +74,7 @@
         }
 
         $scope.return = function () { // sets the webbpage to be that of homecontroller index or whatever default
-            document.location.href = document.location.href.replace("/Animal", "");
+            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Animal/Index/"));
         }
     }
 

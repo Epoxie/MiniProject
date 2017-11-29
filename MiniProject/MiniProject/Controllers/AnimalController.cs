@@ -9,8 +9,10 @@ namespace MiniProject.Controllers
     public class AnimalController : Controller
     {
         // GET: Animal
-        public ActionResult Index()
+        public ActionResult Index(int id)
         {
+            ViewBag.input = id;
+
             return View();
         }
     }
