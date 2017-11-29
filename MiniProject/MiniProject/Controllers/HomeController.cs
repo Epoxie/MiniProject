@@ -14,5 +14,11 @@ namespace MiniProject.Controllers
 
             return View();
         }
+
+        public ActionResult SentenceBuilder()
+        {
+            ViewBag.Title = "Sentence Builder";
+            return View();
+        }
     }
 }

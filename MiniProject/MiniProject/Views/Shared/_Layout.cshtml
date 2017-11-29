@@ -23,6 +23,7 @@
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("Animal", "Index","Animal", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("Sentences", "SentenceBuilder", "Home", new { area = "" }, null)</li>
                 </ul>
             </div>
         </div>
@@ -36,7 +37,8 @@
     </div>
 
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/angular")
     @RenderSection("scripts", required: false)
 </body>
 </html>
