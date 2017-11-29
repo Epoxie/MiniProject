@@ -11,7 +11,7 @@
         <button id="startBtn" class="btn btn-success disabled" ng-click="$ctrl.startQuiz()">Start!</button>
     </div>
     <div id="quizDiv" class="hidden">
-        <label class="label label-default" id="scoreLabel">Score: {{$ctrl.score}}</label>
+        <label class="label label-default" id="scoreLabel">Score: {{$ctrl.score}} / {{$ctrl.count}}</label>
         <div>
             <fieldset>
                 <label>Words</label>
@@ -34,7 +34,7 @@
             </fieldset>
         </div>
         <form class="form-group" ng-submit="$ctrl.checkAnswer()">
-            <input type="text" class="form-control" ng-model="$ctrl.answer" ng-change="$ctrl.checkInput()" placeholder="Enter answer" />
+            <input required type="text" class="form-control" ng-model="$ctrl.answer" ng-change="$ctrl.checkInput()" placeholder="Enter answer" />
             <br/>
             <input class="btn btn-success" type="submit" value="Next!" />
         </form>

@@ -30,6 +30,7 @@
             vm.pageTitle = "Build Sentences!";
             vm.pageDesc = ["Use the words listed to build sentences, you have 10 seconds to answer.", "You get 1 point for every correct sentence, but beware, you get one point deducted if you use any invalid words!"];
             vm.score = 0;
+            vm.count = 0;
 
             vm.inAnswer = function (value) {
                 if (vm.answer && vm.answer.length) {
@@ -45,22 +46,25 @@
             };
 
             vm.checkInput = function () {
-                var words = vm.answer.split(" ");
-                vm.extraWords = [];
-                for (var i = 0, j = words.length; i < j; i++) {
-                    if (answer.indexOf(words[i]) < 0) {
-                        vm.extraWords.push(words[i]);
+
+                if (vm.answer && vm.answer.length) {
+                    var words = vm.answer.split(" ");
+                    vm.extraWords = [];
+                    for (var i = 0, j = words.length; i < j; i++) {
+                        if (answer.indexOf(words[i]) < 0) {
+                            vm.extraWords.push(words[i]);
+                        }
                     }
-                }
-                var extraWordsDiv = document.getElementById("extraWordsDiv").classList;
-                if (vm.extraWords.length) {
-                    if (extraWordsDiv.contains("hidden")) {
-                        extraWordsDiv.remove("hidden");
+                    var extraWordsDiv = document.getElementById("extraWordsDiv").classList;
+                    if (vm.extraWords.length) {
+                        if (extraWordsDiv.contains("hidden")) {
+                            extraWordsDiv.remove("hidden");
+                        }
                     }
-                }
-                else {
-                    if (!extraWordsDiv.contains("hidden")) {
-                        extraWordsDiv.add("hidden");
+                    else {
+                        if (!extraWordsDiv.contains("hidden")) {
+                            extraWordsDiv.add("hidden");
+                        }
                     }
                 }
             };
@@ -83,6 +87,7 @@
                 if (!extraWordsDiv.contains("hidden")) {
                     extraWordsDiv.add("hidden");
                 }
+                vm.count++;
 
                 if (vm.answer === answer) {
                     vm.extraWords = null;
@@ -98,6 +103,7 @@
                     }
                 }
                 else {
+
                     if (vm.extraWords && vm.extraWords.length > 0) {
                         vm.score--;
                         scoreLabel.add("label-danger");
