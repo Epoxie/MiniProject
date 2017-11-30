@@ -8,6 +8,24 @@
         <p ng-repeat="row in $ctrl.pageDesc">{{row}}</p>
     </div>
     <div>
+        <h4>Button colours</h4>
+        <ul class="list-unstyled list-inline">
+            <li>
+                <label class="label label-success">Correct!</label>
+            </li>
+            <li>
+                <label class="label label-info">More than one!</label>
+            </li>
+            <li>
+                <label class="label label-warning">Wrong place!</label>
+            </li>
+            <li>
+                <label class="label label-danger">Incorrect!</label>
+            </li>
+        </ul>
+        <hr />
+    </div>
+    <div>
         <button id="startBtn" class="btn btn-success disabled" ng-click="$ctrl.startQuiz()">Start!</button>
     </div>
     <div id="quizDiv" class="hidden">

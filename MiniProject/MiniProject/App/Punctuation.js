@@ -3,11 +3,12 @@
     var app = angular.module("punctuationExercise", [])
         .controller("punctuationController", ["$http", "$interval", function ($http, $interval) {
             var vm = this;
-            var correctAnswer;
+            var answer;
             var originalSentences = [];
             var sentences = [];
+            var previous;
             var timer = null;
-            var time = 15000;
+            var time = 10000;
             var punctuationMarks = ["'", ".", ",", "?", "!"];
 
             // Helper functions to add and remove classes from DOM-elements
@@ -29,28 +30,25 @@
             };
 
             // Changes .,?! to *
-            var obscurePunctuation = function(arr){
-                arr = arr.replace(/[’'´`.,?!]/g, "*");
-                return arr;
-            };
-
-            var unobscurePunctuation = function (arr, value) {
-                arr = arr.replace("*", value);
-                return arr;
+            var obscurePunctuation = function (arr) {
+                return arr.replace(/[’'´`.,?!]/g, "*");
             };
 
             // Gets a new random question
             var getRandomQuestion = function () {
 
-                //addToElementClassList("labelCorrect", ["hidden"]);
+                // 
+                if (answer && answer.length) {
+                    previous = answer;
+                }
 
                 //checks if we have any questions left, otherwise we simply make new ones
                 if (sentences.length <= 0) {
                     sentences = shuffleArray(angular.copy(originalSentences));
                 }
 
-                correctAnswer = sentences.pop();
-                vm.answer = obscurePunctuation(correctAnswer);
+                answer = sentences.pop();
+                vm.answer = obscurePunctuation(answer);
 
                 vm.punctuationMarks = shuffleArray(punctuationMarks);
 
@@ -72,6 +70,7 @@
                 return arr;
             };
 
+            // 
             var filterPunctuationMarks = function (arr) {
                 if (vm.correctContains(".") && !vm.correctContains("!")) {
                     arr.splice(arr.indexOf("!"), 1, ";");
@@ -81,22 +80,21 @@
                 }
             };
 
+            // more variables
             vm.answer;
             vm.punctuationMarks = [];
             vm.pageTitle = "Punctuation Exercise!";
             vm.pageDesc = [
-                "Use the words listed to build sentences, you have 15 seconds to answer.",
-                "For every correct mark, that mark's button will turn green.",
-                "For every mark in the wrong order, that mark's button will turn orange.",
-                "If a particular mark occurs more than once in the sentence, that mark's button turns blue.",
-                "You get 1 point for every correct sentence, but beware; you lose one point if you use any invalid marks!"
+                "Use the buttons listed to add punctuation marks to the sentences, you have 10 seconds to answer.",
+                "You get 1 point for every correct sentence!"
             ];
             vm.score = 0;
             vm.count = 0;
 
+            // checks if the correct answer contains the mark
             vm.correctContains = function (mark) {
-                if (correctAnswer && correctAnswer.length) {
-                    return correctAnswer.indexOf(mark) >= 0;
+                if (answer && answer.length) {
+                    return answer.indexOf(mark) >= 0;
                 }
                 return false;
             };
@@ -106,8 +104,8 @@
             vm.isUnique = function (mark) {
 
                 var num = 0;
-                for (var i = 0, j = correctAnswer.length; i < j; i++) {
-                    if (correctAnswer[i] == mark) {
+                for (var i = 0, j = answer.length; i < j; i++) {
+                    if (answer[i] == mark) {
                         num++;
                     }
                 };
@@ -132,13 +130,9 @@
                     vm.answer = vm.answer.replace("*", mark);
                 }
 
-                if (vm.answer == correctAnswer) {
-                    $interval.cancel(timer);
-                    timer = $interval(vm.checkAnswer, 1000);
+                if (vm.answer == answer) {
+                    vm.checkAnswer();
                 }
-                //var index = vm.answer.indexOf("*");
-                //if (correctAnswer[index] == mark) {
-                //}
             };
 
             // Checks if a word is in the right place
@@ -146,12 +140,12 @@
                 if (!vm.answer) {
                     vm.answer = "";
                 }
-                if (!correctAnswer) {
-                    correctAnswer = "";
+                if (!answer) {
+                    answer = "";
                 }
                 var index = vm.answer.lastIndexOf(mark);
 
-                return correctAnswer[index] == mark;
+                return answer[index] == mark;
             };
 
             // Checks if the answer contains the current word
@@ -171,37 +165,47 @@
             };
 
             // Check the answer
-            vm.checkAnswer = function (answer) {
+            vm.checkAnswer = function () {
+                removeFromElementClassList("labelCorrect", ["label-success", "label-warning", "label-danger"]);
                 // removes these classes from the score label
                 removeFromElementClassList("scoreLabel", ["label-success", "label-warning", "label-danger"])
 
                 // cancel old timer
                 $interval.cancel(timer);
 
-                // unobscure the punctuation mark
-                answer = unobscurePunctuation(vm.answer, answer);
+                vm.correct = answer;
 
                 // If answer is correct
-                if (answer === correctAnswer) {
+                if (vm.answer === answer) {
                     //removeFromElementClassList("labelCorrect", ["hidden"]);
                     addToElementClassList("scoreLabel", ["label-success"]);
+                    addToElementClassList("labelCorrect", ["label-success"]);
                     vm.score++;
                 }
                 else { // if answer is incorrect 
-
                     addToElementClassList("scoreLabel", ["label-warning"]);
+                    addToElementClassList("labelCorrect", ["label-warning"]);
                 }
 
                 // Fix things
-                correctAnswer = "";
-                vm.answer = "";
                 vm.count++;
 
+                // start new timer
+                timer = $interval(vm.getNewRandomQuestion, 1000);
+            };
+
+            vm.getNewRandomQuestion = function () {
+                $interval.cancel(timer);
+                removeFromElementClassList("labelCorrect", ["label-success", "label-warning", "label-danger"]);
+                vm.correct = null;
+                answer = "";
+                vm.answer = "";
                 // gets a new questions
                 getRandomQuestion();
                 // new timer
                 timer = $interval(vm.checkAnswer, time);
-            };
+                
+            }
 
             // Will be called when controller div is initialised
             vm.init = function () {

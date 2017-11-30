@@ -62,9 +62,6 @@
             vm.pageDesc = [
                 "Use the words listed to build sentences, you have 30 seconds to answer.",
                 "You can use both the word buttons and the textbox directly to build the sentences.",
-                "For every correct word, that word's button will turn green.",
-                "For every word in the wrong order, that word's button will turn orange.",
-                "If a particular word occurs more than once in the sentence, that word's button turns blue.",
                 "You get 1 point for every correct sentence, but beware; you lose one point if you use any invalid words!"
             ];
             vm.score = 0;
