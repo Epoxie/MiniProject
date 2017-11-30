@@ -86,7 +86,6 @@
                         num--;
                     }
                 };
-                console.log("Num: " + num);
                 return num == 0;
             };
 
@@ -179,10 +178,14 @@
 
                 // Makes sure that the div with the invalid words are hidden
                 addToElementClassList("invalidWordsDiv", ["hidden"]);
+                if (!vm.answer) {
+                    vm.answer = "";
+                }
+                vm.answer = vm.answer.trim();
 
                 // If answer is correct
                 if (vm.answer == answer) {
-                    vm.checkAnswer = null;
+                    vm.correctAnswer = null;
                     addToElementClassList("correctAnswer", ["hidden"]);
 
                     addToElementClassList("scoreLabel", ["label-success"]);
