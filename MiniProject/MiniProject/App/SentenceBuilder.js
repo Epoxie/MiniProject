@@ -57,6 +57,7 @@
 
             // Some more variables, but accessible from the markup
             vm.shuffledWords = [];
+            vm.correctAnswer;
             vm.pageTitle = "Build Sentences!";
             vm.pageDesc = [
                 "Use the words listed to build sentences, you have 30 seconds to answer.",
@@ -181,12 +182,15 @@
 
                 // If answer is correct
                 if (vm.answer == answer) {
+                    vm.checkAnswer = null;
+                    addToElementClassList("correctAnswer", ["hidden"]);
 
                     addToElementClassList("scoreLabel", ["label-success"]);
                     vm.score++;
                 }
                 else { // if answer is incorrect 
-
+                    vm.correctAnswer = answer;
+                    removeFromElementClassList("correctAnswer", ["hidden"]);
                     // Checks if there are any invalid words
                     if (vm.invalidWords && vm.invalidWords.length) {
                         vm.score--;
