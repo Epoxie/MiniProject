@@ -132,7 +132,6 @@
                 addToElementClassList("startBtn", ["hidden"]);
                 removeFromElementClassList("quizDiv", ["hidden"]);
                 getRandomQuestion();
-                vm.Maxcount = sessionStorage.sentenceVar - 1;
 
                 // 30 seconds until it automatically goes to a new question
                 timer = $interval(vm.checkAnswer, time);
@@ -204,9 +203,11 @@
                     }
                 }
 
+                vm.shuffledWords = [];
+
                 // return
                 if (vm.count == vm.Maxcount) {
-                    document.getElementById("answer").readOnly = true;
+                    //document.getElementById("answer").readOnly = true;
                     var interval = setInterval(function myfunction() {
                         clearInterval(interval); // clears interval
                         interval = null;
@@ -225,8 +226,11 @@
                 vm.answer = null;
                 vm.count++;
 
+
                 // gets a new questions
-                getRandomQuestion();
+                if (sessionStorage.loopList == null) {
+                    getRandomQuestion();
+                }
 
                 // new timer
                 timer = $interval(vm.checkAnswer, time);
@@ -234,8 +238,10 @@
 
             // Will be called when controller div is initialised
             vm.init = function () {
-               removeFromElementClassList("sentenceDiv", ["hidden"]);
+                removeFromElementClassList("sentenceDiv", ["hidden"]);
+                vm.Maxcount = sessionStorage.sentenceVar - 1;
                 vm.getData();
+
             };
 
             // Gets the sentences from the database
@@ -245,6 +251,19 @@
                         originalSentences = response.data;
                         sentences = shuffleArray(angular.copy(originalSentences));
                         removeFromElementClassList("startBtn", ["disabled"]);
+
+                        // If random quiz
+                        if (sessionStorage.loopList != null) {
+                            addToElementClassList("startBtn", ["hidden"]);
+                            removeFromElementClassList("quizDiv", ["hidden"]);
+                            getRandomQuestion();
+
+                            // 30 seconds until it automatically goes to a new question
+                            timer = $interval(vm.checkAnswer, time);
+                        }
+                        else {
+                           // sessionStorage.sentenceVar = null;
+                        }
                     });
             };
         }]);
