@@ -210,7 +210,7 @@
                     var interval = setInterval(function myfunction() {
                         clearInterval(interval); // clears interval
                         interval = null;
-                        if (sessionStorage.loopList.length > 1) {
+                        if (sessionStorage.loopList.length > 1 || sessionStorage.loopList != null) {
                             var adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
                             sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
                             document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")) + "/Home/" + adress; // sets the webpage to Home/adress

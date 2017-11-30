@@ -1,10 +1,8 @@
 ﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h1>Welcome to QuizTown!</h1>
 </div>
 <div ng-app="setupApp">
-    <div ng-controller="setupController">
+    <div ng-controller="setupController" style="text-align: center;">
         <select ng-init="reset()" id="animalSelect">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -12,7 +10,7 @@
             <option value="4">4</option>
             <option value="5">5</option>
         </select>
-        <button ng-click="animalSetup()">Start Animal Quiz</button>
+        <button class="btn btn-primary" ng-click="animalSetup()" style="margin: 2px;">Start Animal Quiz</button><br />
         <select id="sentenceSelect">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -20,7 +18,7 @@
             <option value="4">4</option>
             <option value="5">5</option>
         </select>
-        <button ng-click="sentenceSetup()">Start Sentence Quiz</button>
-        <button ng-click="startRandom()">Start 15 Random Questions</button>
+        <button class="btn btn-primary" ng-click="sentenceSetup()" style="margin: 2px;">Start Sentence Quiz</button><br />
+        <button class="btn btn-info" ng-click="startRandom()" style="margin: 2px;">Start 15 Random Questions</button>
     </div>
 </div>

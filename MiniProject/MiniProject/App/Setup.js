@@ -32,9 +32,9 @@
         }
 
         $scope.reset = function () {
-            sessionStorage.loopList = null;
-            sessionStorage.animalVar = null;
-            sessionStorage.sentenceVar = null;
+            sessionStorage.removeItem("loopList");
+            sessionStorage.removeItem("animalVar");
+            sessionStorage.removeItem("sentenceVar");
         }
 
     }

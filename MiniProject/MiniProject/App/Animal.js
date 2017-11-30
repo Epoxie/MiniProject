@@ -79,7 +79,10 @@
         }
 
         $scope.return = function () { // sets the webbpage to be that of homecontroller index or whatever default
-            if (sessionStorage.loopList.length > 1)
+            alert(sessionStorage.loopList);
+            alert(sessionStorage.loopList != null);
+            alert(sessionStorage.loopList == null);
+            if (sessionStorage.loopList.length > 1 || sessionStorage.loopList != null)
             {
                 $scope.adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
                 sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
