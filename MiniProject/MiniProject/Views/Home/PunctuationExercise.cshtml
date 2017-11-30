@@ -13,12 +13,34 @@
     <div id="quizDiv" class="hidden">
         <label class="label label-default" id="scoreLabel">Score: {{$ctrl.score}} / {{$ctrl.count}}</label>
         <div id="questionDiv">
-            <h2>{{$ctrl.sentence}}</h2>
+            <h2>{{$ctrl.answer}} <label id="labelCorrect" class="hidden label label-success">Correct!</label></h2>
         </div>
         <div>
             <ul class="list-unstyled list-inline list-group">
-                <li ng-repeat="mark in $ctrl.punctuationMarks">
-                    <button ng-if="$ctrl.answerContains(mark)" class="btn btn-info btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
+                <li ng-repeat="mark in $ctrl.punctuationMarks track by $index">
+                    <button class="btn btn-success btn-lg" ng-click="$ctrl.updateAnswer(mark)"
+                            ng-if="$ctrl.answerContains(mark)
+                                && $ctrl.inRightPlace(mark)
+                                && $ctrl.isUnique(mark)">
+                        {{mark}}
+                    </button>
+                    <button class="btn btn-info btn-lg" ng-click="$ctrl.updateAnswer(mark)"
+                            ng-if="$ctrl.answerContains(mark)
+                                && $ctrl.inRightPlace(mark)
+                                && !$ctrl.isUnique(mark)">
+                        {{mark}}
+                    </button>
+                    <button class="btn btn-warning btn-lg" ng-click="$ctrl.updateAnswer(mark)"
+                            ng-if="$ctrl.answerContains(mark)
+                                && !$ctrl.inRightPlace(mark)
+                                && $ctrl.correctContains(mark)">
+                        {{mark}}
+                    </button> 
+                    <button class="btn btn-danger btn-lg" ng-click="$ctrl.updateAnswer(mark)"
+                            ng-if="$ctrl.answerContains(mark)
+                                && !$ctrl.correctContains(mark)">
+                        {{mark}}
+                    </button> 
                     <button ng-if="!$ctrl.answerContains(mark)" class="btn btn-default btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
                 </li>
             </ul>
