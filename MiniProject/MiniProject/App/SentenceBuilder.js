@@ -1,5 +1,5 @@
 ﻿(function () {
-    // TODO: checkInput() doesn't work as it should.
+    // TODO: fix checkInput()
 
     // Tried using a "Controller as" approach
     // https://toddmotto.com/digging-into-angulars-controller-as-syntax/
@@ -24,7 +24,7 @@
             };
             var removeFromElementClassList = function (elementId, className) {
                 var element = document.getElementById(elementId);
-                for(var i = 0, j = className.length; i < j; i++){
+                for (var i = 0, j = className.length; i < j; i++) {
                     if (element.classList.contains(className[i])) {
                         element.classList.remove(className[i]);
                     }
@@ -62,59 +62,67 @@
                 "Use the words listed to build sentences, you have 30 seconds to answer.",
                 "You can use both the word buttons and the textbox directly to build the sentences.",
                 "For every correct word, that word's button will turn green.",
-                "For every word in the wrong order, that word's button will turn orange",
-                "You get 1 point for every correct sentence, but beware; you get one point deducted if you use any invalid words!"
+                "For every word in the wrong order, that word's button will turn orange.",
+                "If a particular word occurs more than once in the sentence, that word's button turns blue.",
+                "You get 1 point for every correct sentence, but beware; you lose one point if you use any invalid words!"
             ];
             vm.score = 0;
             vm.count = 0;
             vm.Maxcount = 1;
 
+            // Checks if a word is unique in the sentence
+            vm.uniqueWord = function (word) {
+                var words = answer.split(" ");
+                var num = 0;
+                for (var i = 0, j = words.length; i < j; i++) {
+                    if (words[i] == word) {
+                        num++;
+                    }
+                };
+                words = vm.answer.replace("&nbsp;", " ").split(" ");
+                for (var i = 0, j = words.length; i < j; i++) {
+                    if (words[i] == word) {
+                        num--;
+                    }
+                };
+                console.log("Num: " + num);
+                return num == 0;
+            };
+
+            // TODO: fix
             // Update the answer when clicking the word buttons
             vm.updateAnswer = function (word) {
                 if (!vm.answer) {
                     vm.answer = "";
                 }
-                var words = vm.answer.split(" ");
-                var index = words.indexOf(word);
+                word = word.trim();
+                var words = vm.answer.replace("&nbsp;", " ").split(" ");
+                var index = words.lastIndexOf(word);
 
-                if (index >= 0) {
-                    // To see if there are more than one index for that specific word
-                    var lastIndex = words.lastIndexOf(word);
-                    if (index == lastIndex) {
-                        words.splice(index, 1);
-                    }
-                    else {
-                        words.splice(lastIndex, 1);
-                    }
+                if (index >= 0 && (!vm.wordInRightPlace(word) || vm.uniqueWord(word))) {
+                    words.splice(index, 1);
                 }
                 else {
                     words.push(word);
                 }
 
                 vm.answer = words.join(" ").trim();
+                vm.checkInput();
             };
 
+            // Checks if a word is in the right place
             vm.wordInRightPlace = function (word) {
-                var index = vm.answer.indexOf(word);
-                var correctIndex = answer.indexOf(word);
-                return index == correctIndex;
+                var index = vm.answer.replace("&nbsp;", " ").split(" ").lastIndexOf(word);
+                var words = answer.split(" ");
+
+                return words[index] == word;
             };
 
             // Checks if the answer contains the current word
             vm.answerContains = function (word) {
                 if (vm.answer && vm.answer.length) {
-                    var words = vm.answer.split(" ");
-                    var index = words.indexOf(word);
-                    var lastIndex = words.lastIndexOf(word);
-
-                    // If there's only one such word in the sentence
-                    if (index == lastIndex) {
-                        return index > -1;
-                    }
-
-                    // Will add this functioanlity later
-                    console.log("More than 1!1!");
-                    return index > -1;
+                    var words = vm.answer.replace("&nbsp;", " ").split(" ");
+                    return words.lastIndexOf(word) > -1;
                 }
                 return false;
             };
@@ -126,31 +134,38 @@
                 getRandomQuestion();
                 vm.Maxcount = sessionStorage.getItem("sentenceVar") - 1;
 
-                // 15 seconds until it automatically goes to a new question
+                // 30 seconds until it automatically goes to a new question
                 timer = $interval(vm.checkAnswer, time);
             };
 
+            // TODO: fix 
             // Checks input to see if the user has inputed any invalid words.
-            // TODO: fix this
             vm.checkInput = function () {
                 if (vm.answer) {
-                    var words = vm.answer.split(" ");
-                    vm.extraWords = [];
-                    var correctWords = answer.split(" ");
+                    var words = vm.answer.replace("&nbsp;", " ").split(" ");
+                    vm.invalidWords = [];
                     for (var i = 0, j = words.length; i < j; i++) {
                         // 
-                        if (correctWords.indexOf(words[i]) < 0) {
-                            vm.extraWords.push(words[i]);
+                        var index = answer.indexOf(words[i]);
+                        if (words[i].length <= 1 && index != 0) {
+                            words[i] += " ";
+                        }
+                        if (index < 0) {
+                            vm.invalidWords.push(words[i]);
                         }
                     }
 
                     // Shows or hides the div with the invalid words
-                    if (vm.extraWords.length) {
-                        removeFromElementClassList("extraWordsDiv", ["hidden"]);
+                    if (vm.invalidWords.length) {
+                        removeFromElementClassList("invalidWordsDiv", ["hidden"]);
                     }
                     else {
-                        addToElementClassList("extraWordsDiv", ["hidden"]);
+                        addToElementClassList("invalidWordsDiv", ["hidden"]);
                     }
+                }
+                else {
+                    vm.invalidWords = [];
+                    addToElementClassList("invalidWordsDiv", ["hidden"]);
                 }
             };
 
@@ -158,10 +173,11 @@
             vm.checkAnswer = function () {
                 removeFromElementClassList("scoreLabel", ["label-success", "label-warning", "label-danger"])  
 
+                // cancel the timer
                 $interval.cancel(timer);
 
                 // Makes sure that the div with the invalid words are hidden
-                addToElementClassList("extraWordsDiv", ["hidden"]);
+                addToElementClassList("invalidWordsDiv", ["hidden"]);
 
                 // If answer is correct
                 if (vm.answer == answer) {
@@ -172,7 +188,7 @@
                 else { // if answer is incorrect 
 
                     // Checks if there are any invalid words
-                    if (vm.extraWords && vm.extraWords.length > 0) {
+                    if (vm.invalidWords && vm.invalidWords.length) {
                         vm.score--;
                         addToElementClassList("scoreLabel", ["label-danger"]);
                     }
@@ -193,7 +209,7 @@
                 }
 
                 // Fix things
-                vm.extraWords = null;
+                vm.invalidWords = null;
                 vm.answer = null;
                 vm.count++;
 
@@ -220,4 +236,37 @@
                     });
             };
         }]);
+
+    // To make ng-model and ng-change work with contenteditable elements
+    app.directive("contenteditable", function () {
+        return {
+            require: "ngModel",
+            restrict: "A",
+            link: function (scope, element, attrs, ngModel) {
+
+                function update() {
+                    // To force the click event to fire when hitting enter, isntead of adding <div><br></div>, and other weird stuff
+                    // Doesn't check if
+                    var html = element.html();
+                    var index = index = html.indexOf("<div>");
+                    if (index >= 0) {
+                        element.html(html.substring(0, index));
+                        angular.element(document.getElementById("sentenceDiv")).scope().$ctrl.checkAnswer();
+                    }
+
+                    ngModel.$setViewValue(element.html());
+                }
+
+                element.on("keyup", update);
+
+                scope.$on("$destroy", function () {
+                    element.off("keyup", update);
+                });
+
+                ngModel.$render = function () {
+                    element.html(ngModel.$viewValue || "");
+                };
+            }
+        };
+    });
 })();
