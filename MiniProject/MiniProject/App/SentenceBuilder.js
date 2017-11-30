@@ -124,7 +124,7 @@
                 addToElementClassList("startBtn", ["hidden"]);
                 removeFromElementClassList("quizDiv", ["hidden"]);
                 getRandomQuestion();
-                vm.Maxcount = sessionStorage.getItem("sentenceVar") - 1;
+                vm.Maxcount = sessionStorage.sentenceVar - 1;
 
                 // 15 seconds until it automatically goes to a new question
                 timer = $interval(vm.checkAnswer, time);
@@ -183,12 +183,17 @@
 
                 // return
                 if (vm.count == vm.Maxcount) {
-                    sessionStorage.sentenceVar = null;
                     document.getElementById("answer").readOnly = true;
                     var interval = setInterval(function myfunction() {
                         clearInterval(interval); // clears interval
                         interval = null;
-                        document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home"));       
+                        if (sessionStorage.loopList.length > 1) {
+                            var adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
+                            sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
+                            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")) + "/Home/" + adress; // sets the webpage to Home/adress
+                        }
+                        else
+                            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")); // just goes back     
                     }, 1000);
                 }
 

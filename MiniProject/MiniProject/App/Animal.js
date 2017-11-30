@@ -9,7 +9,7 @@
         } */ // currently unused code
 
         $scope.animalInit = function () {
-            $scope.totalAttempts = sessionStorage.getItem("animalVar");
+            $scope.totalAttempts = sessionStorage.animalVar;
             $scope.randomAnimal();
         }
 
@@ -35,7 +35,7 @@
             for (i = 0; i < 3; i++)
             {
                 $scope.currentAnimalIndex = Math.floor(Math.random() * $scope.animalNames.length); // random number that is not too big
-                $scope.alternatives.splice(i, 1, $scope.animalNames[$scope.currentAnimalIndex]); // sets the three? alternatives to be unique animals
+                $scope.alternatives.splice(i, 1, $scope.animalNames[$scope.currentAnimalIndex]); // sets the three alternatives to be unique animals
                 $scope.animalNames.splice($scope.currentAnimalIndex, 1); // removes the animals from the original list
             }
             $scope.animalNames = $scope.animalNames.concat($scope.alternatives); // concats the original list with the alternatives so that there's always the same amount of choices
@@ -79,7 +79,14 @@
         }
 
         $scope.return = function () { // sets the webbpage to be that of homecontroller index or whatever default
-            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home"));
+            if (sessionStorage.loopList.length > 1)
+            {
+                $scope.adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
+                sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
+                document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")) + "/Home/" + $scope.adress; // sets the webpage to Home/adress
+            }
+            else
+                document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")); // just goes back
         }
     }
 
