@@ -31,6 +31,12 @@
             }
         }
 
+        $scope.reset = function () {
+            sessionStorage.loopList = null;
+            sessionStorage.animalVar = null;
+            sessionStorage.sentenceVar = null;
+        }
+
     }
 
     app.controller("setupController", ["$scope", "$http", setupController]);
