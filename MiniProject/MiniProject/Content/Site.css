@@ -15,3 +15,8 @@ select,
 textarea {
     max-width: 280px;
 }
+
+[contenteditable=true]:empty:before {
+    content: attr(placeholder);
+    display: block; /* For Firefox */
+}

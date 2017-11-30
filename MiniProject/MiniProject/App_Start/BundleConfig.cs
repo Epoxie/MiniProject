@@ -20,6 +20,7 @@ namespace MiniProject
                     "~/Scripts/angular.min.js",
                     "~/App/Setup.js",
                     "~/App/Animal.js",
+                    "~/App/Punctuation.js",
                     "~/App/SentenceBuilder.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(

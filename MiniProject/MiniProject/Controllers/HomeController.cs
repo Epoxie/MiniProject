@@ -26,5 +26,11 @@ namespace MiniProject.Controllers
             ViewBag.Title = "Animal Quiz";
             return View();
         }
+
+        public ActionResult PunctuationExercise()
+        {
+            ViewBag.Title = "Punctuation Exercise";
+            return View();
+        }
     }
 }

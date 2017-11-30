@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\Animal.js" />
+    <Content Include="App\Punctuation.js" />
     <Content Include="App\SentenceBuilder.js" />
     <Content Include="App\Setup.js" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -230,6 +231,7 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Home\AnimalQuiz.cshtml" />
     <Content Include="Views\Home\SentenceBuilder.cshtml" />
+    <Content Include="Views\Home\PunctuationExercise.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
