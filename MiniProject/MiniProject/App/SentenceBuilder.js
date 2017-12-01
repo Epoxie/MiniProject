@@ -55,35 +55,130 @@
                 return arr;
             };
 
-            // Some more variables, but accessible from the markup
+            // Checks if a word is unique in the sentence
+            var isUnique = function (word) {
+                var correctWords = answer.split(" ");
+                var words = vm.answer.replace("&nbsp;", " ").split(" ");
+                var num = 0;
+                for (var i = 0, j = correctWords.length; i < j; i++) {
+                    if (correctWords[i] == word) {
+                        num++;
+                    }
+                    if (i < words.length && words[i] == word) {
+                        num--;
+                    }
+                };
+                return num == 0;
+            };
+            // Checks if a word is in the right place
+            var inRightPlace = function (word) {
+                var index = vm.answer.replace("&nbsp;", " ").split(" ").lastIndexOf(word);
+                var words = answer.split(" ");
+
+                return words[index] == word;
+            };
+            // Checks if the answer contains the current word
+            var answerContains = function (word) {
+                if (vm.answer && vm.answer.length) {
+                    var words = vm.answer.replace("&nbsp;", " ").split(" ");
+                    return words.lastIndexOf(word) > -1;
+                }
+                return false;
+            };
+
+            // will be called 1 second after vm.checkAnswer()
+            var getNewRandomQuestion = function () {
+                // Fix things
+                $interval.cancel(timer);
+                removeFromElementClassList("correctAnswerLabel", ["label-success", "label-warning", "label-danger"])
+                vm.correctAnswer = null;
+                vm.invalidWords = null;
+                vm.answer = null;
+                answer = null;
+                vm.shuffledWords = [];
+
+                // Moved this down here, and changed it a little so there wouldn't be an extra 1 second until redirecting
+                // return
+                if (vm.count == vm.Maxcount) {
+                    if (sessionStorage.loopList != null && sessionStorage.loopList.length > 1) {
+                        var adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
+                        sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
+                        document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")) + "/Home/" + adress; // sets the webpage to Home/adress
+                    }
+                    else {
+                        document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")); // just goes back 
+                    }
+                }
+                else {
+                    // re-enable all the buttons
+                    var btns = document.getElementsByClassName("btn");
+                    for (var i = 0, j = btns.length; i < j; i++) {
+                        if (btns[i].getAttribute("id") == null) {
+                            btns[i].setAttribute("id", "tmpBtnId" + i);
+                        }
+                        removeFromElementClassList(btns[i].getAttribute("id"), ["disabled"]);
+                    };
+                    // Re-enable the contenteditable span
+                    var inputSpan = document.getElementById("inputSpan");
+                    inputSpan.innerHTML = "";
+                    inputSpan.setAttribute("contenteditable", "true");
+
+                    // new question
+                    getRandomQuestion();
+
+                    // new timer
+                    timer = $interval(vm.checkAnswer, time);
+                }
+            };
+            // Gets the sentences from the database
+            var getData = function () {
+                $http.get("/api/sentences/get")
+                    .then(function (response) {
+                        originalSentences = response.data;
+                        sentences = shuffleArray(angular.copy(originalSentences));
+                        removeFromElementClassList("startBtn", ["disabled"]);
+
+                        // If random quiz
+                        if (sessionStorage.loopList != null) {
+                            addToElementClassList("startBtn", ["hidden"]);
+                            removeFromElementClassList("quizDiv", ["hidden"]);
+                            getRandomQuestion();
+
+                            // 30 seconds until it automatically goes to a new question
+                            timer = $interval(vm.checkAnswer, time);
+                        }
+                        else {
+                            // something else
+                        }
+                    });
+            };
+
+            //############ Accessible from the markup ############//
+
+            // Some more variables
             vm.shuffledWords = [];
             vm.correctAnswer;
+            vm.score = 0;
+            vm.count = 0;
             vm.pageTitle = "Build Sentences!";
             vm.pageDesc = [
                 "Use the words listed to build sentences, you have 30 seconds to answer.",
                 "You can use both the word buttons and the textbox directly to build the sentences.",
                 "You get 1 point for every correct sentence, but beware; you lose one point if you use any invalid words!"
             ];
-            vm.score = 0;
-            vm.count = 0;
-            vm.Maxcount = 1;
 
-            // Checks if a word is unique in the sentence
-            vm.uniqueWord = function (word) {
-                var words = answer.split(" ");
-                var num = 0;
-                for (var i = 0, j = words.length; i < j; i++) {
-                    if (words[i] == word) {
-                        num++;
-                    }
-                };
-                words = vm.answer.replace("&nbsp;", " ").split(" ");
-                for (var i = 0, j = words.length; i < j; i++) {
-                    if (words[i] == word) {
-                        num--;
-                    }
-                };
-                return num == 0;
+            // functions to set the colour of the buttons
+            vm.isGreen = function (word) {
+                return answerContains(word) && inRightPlace(word) && isUnique(word);
+            };
+            vm.isBlue = function (word) {
+                return answerContains(word) && inRightPlace(word) && !isUnique(word);
+            };
+            vm.isOrange = function (word) {
+                return answerContains(word) && !inRightPlace(word);
+            };
+            vm.isWhite = function (word) {
+                return !answerContains(word);
             };
 
             // TODO: fix
@@ -96,7 +191,7 @@
                 var words = vm.answer.replace("&nbsp;", " ").split(" ");
                 var index = words.lastIndexOf(word);
 
-                if (index >= 0 && (!vm.wordInRightPlace(word) || vm.uniqueWord(word))) {
+                if (index >= 0 && (!inRightPlace(word) || isUnique(word))) {
                     words.splice(index, 1);
                 }
                 else {
@@ -104,34 +199,12 @@
                 }
 
                 vm.answer = words.join(" ").trim();
-                vm.checkInput();
-            };
-
-            // Checks if a word is in the right place
-            vm.wordInRightPlace = function (word) {
-                var index = vm.answer.replace("&nbsp;", " ").split(" ").lastIndexOf(word);
-                var words = answer.split(" ");
-
-                return words[index] == word;
-            };
-
-            // Checks if the answer contains the current word
-            vm.answerContains = function (word) {
-                if (vm.answer && vm.answer.length) {
-                    var words = vm.answer.replace("&nbsp;", " ").split(" ");
-                    return words.lastIndexOf(word) > -1;
+                if (vm.answer == answer) {
+                    vm.checkAnswer();
                 }
-                return false;
-            };
-
-            // Starts the quiz (duh)
-            vm.startQuiz = function () {
-                addToElementClassList("startBtn", ["hidden"]);
-                removeFromElementClassList("quizDiv", ["hidden"]);
-                getRandomQuestion();
-
-                // 30 seconds until it automatically goes to a new question
-                timer = $interval(vm.checkAnswer, time);
+                else {
+                    vm.checkInput();
+                }
             };
 
             // TODO: fix 
@@ -149,8 +222,7 @@
                         if (index < 0) {
                             vm.invalidWords.push(words[i]);
                         }
-                    }
-
+                    };
                     // Shows or hides the div with the invalid words
                     if (vm.invalidWords.length) {
                         removeFromElementClassList("invalidWordsDiv", ["hidden"]);
@@ -167,101 +239,74 @@
 
             // Check the answer
             vm.checkAnswer = function () {
-                removeFromElementClassList("scoreLabel", ["label-success", "label-warning", "label-danger"])  
-
                 // cancel the timer
                 $interval.cancel(timer);
 
+                // disable all the buttons
+                var btns = document.getElementsByClassName("btn");
+                for (var i = 0, j = btns.length; i < j; i++) {
+                    if (btns[i].getAttribute("id") == null) {
+                        btns[i].setAttribute("id", "tmpBtnId" + i);
+                    }
+                    addToElementClassList(btns[i].getAttribute("id"), ["disabled"]);
+                };
+
+                // reset the scoreLabel
+                removeFromElementClassList("scoreLabel", ["label-success", "label-warning", "label-danger"])
+                
+                // disable the contenteditable span
+                var inputSpan = document.getElementById("inputSpan");
+                inputSpan.setAttribute("contenteditable", "false");
+                inputSpan.innerHTML = vm.answer;
+
                 // Makes sure that the div with the invalid words are hidden
                 addToElementClassList("invalidWordsDiv", ["hidden"]);
+
                 if (!vm.answer) {
                     vm.answer = "";
                 }
                 vm.answer = vm.answer.trim();
+                vm.correctAnswer = answer;
+                vm.count++;
 
                 // If answer is correct
                 if (vm.answer == answer) {
-                    vm.correctAnswer = null;
-                    addToElementClassList("correctAnswer", ["hidden"]);
-
                     addToElementClassList("scoreLabel", ["label-success"]);
+                    addToElementClassList("correctAnswerLabel", ["label-success"]);
                     vm.score++;
                 }
                 else { // if answer is incorrect 
-                    vm.correctAnswer = answer;
-                    removeFromElementClassList("correctAnswer", ["hidden"]);
                     // Checks if there are any invalid words
                     if (vm.invalidWords && vm.invalidWords.length) {
                         vm.score--;
                         addToElementClassList("scoreLabel", ["label-danger"]);
+                        addToElementClassList("correctAnswerLabel", ["label-danger"]);
                     }
                     else {
                         addToElementClassList("scoreLabel", ["label-warning"]);
+                        addToElementClassList("correctAnswerLabel", ["label-warning"]);
                     }
                 }
-
-                vm.shuffledWords = [];
-
-                // return
-                if (vm.count == vm.Maxcount) {
-                    //document.getElementById("answer").readOnly = true;
-                    var interval = setInterval(function myfunction() {
-                        clearInterval(interval); // clears interval
-                        interval = null;
-                        if (sessionStorage.loopList.length > 1 || sessionStorage.loopList != null) {
-                            var adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
-                            sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
-                            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")) + "/Home/" + adress; // sets the webpage to Home/adress
-                        }
-                        else
-                            document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")); // just goes back     
-                    }, 1000);
-                }
-
-                // Fix things
-                vm.invalidWords = null;
-                vm.answer = null;
-                vm.count++;
-
-
-                // gets a new questions
-                if (sessionStorage.loopList == null) {
-                    getRandomQuestion();
-                }
-
                 // new timer
+                timer = $interval(getNewRandomQuestion, 1000);
+            };
+
+            // Starts the quiz (duh)
+            vm.startQuiz = function () {
+                addToElementClassList("startBtn", ["hidden"]);
+                removeFromElementClassList("quizDiv", ["hidden"]);
+                getRandomQuestion();
+
+                // 30 seconds until it automatically goes to a new question
                 timer = $interval(vm.checkAnswer, time);
             };
 
             // Will be called when controller div is initialised
             vm.init = function () {
                 removeFromElementClassList("sentenceDiv", ["hidden"]);
-                vm.Maxcount = sessionStorage.sentenceVar - 1;
-                vm.getData();
+                vm.Maxcount = sessionStorage.sentenceVar;
+                getData();
 
-            };
-
-            // Gets the sentences from the database
-            vm.getData = function () {
-                $http.get("/api/sentences/get")
-                    .then(function (response) {
-                        originalSentences = response.data;
-                        sentences = shuffleArray(angular.copy(originalSentences));
-                        removeFromElementClassList("startBtn", ["disabled"]);
-
-                        // If random quiz
-                        if (sessionStorage.loopList != null) {
-                            addToElementClassList("startBtn", ["hidden"]);
-                            removeFromElementClassList("quizDiv", ["hidden"]);
-                            getRandomQuestion();
-
-                            // 30 seconds until it automatically goes to a new question
-                            timer = $interval(vm.checkAnswer, time);
-                        }
-                        else {
-                           // sessionStorage.sentenceVar = null;
-                        }
-                    });
             };
         }]);
 

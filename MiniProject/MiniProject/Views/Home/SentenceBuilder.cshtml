@@ -11,16 +11,16 @@
         <h4>Button colours</h4>
         <ul class="list-unstyled list-inline">
             <li>
-                <label class="label label-success">Correct!</label>
+                <h4><label class="label label-success">Correct!</label></h4>
             </li>
             <li>
-                <label class="label label-info">More than one!</label>
+                <h4><label class="label label-info">Can be clicked again!</label></h4>
             </li>
             <li>
-                <label class="label label-warning">Wrong place!</label>
+                <h4><label class="label label-warning">Wrong place!</label></h4>
             </li>
             <li>
-                <label class="label label-danger">Incorrect!</label>
+                <h4><label class="label label-danger">Incorrect!</label></h4>
             </li>
         </ul>
         <hr />
@@ -29,35 +29,18 @@
         <button id="startBtn" class="btn btn-success disabled" ng-click="$ctrl.startQuiz()">Start!</button>
     </div>
     <div id="quizDiv" class="hidden">
-        <label class="label label-default" id="scoreLabel">Score: {{$ctrl.score}} / {{$ctrl.count}}</label>
+        <h3><label id="correctAnswerLabel" class="label label-default">Correct sentence: {{$ctrl.correctAnswer}}</label></h3>
+        <h3><label class="label label-default" id="scoreLabel">Score: {{$ctrl.score}} / {{$ctrl.count}}</label></h3>
         <br />
-        <label id="correctAnswer" class="hidden label label-warning">The correct answer was: {{$ctrl.correctAnswer}}</label>
         <div>
             <fieldset>
                 <label>Words</label>
                 <ul class="list-inline list-unstyled">
                     <li ng-repeat="word in $ctrl.shuffledWords track by $index">
-                        <button class="btn btn-success"
-                                ng-if="$ctrl.answerContains(word) 
-                                && $ctrl.wordInRightPlace(word)
-                                && $ctrl.uniqueWord(word)" 
-                                ng-click="$ctrl.updateAnswer(word)">
-                            {{ word }}
-                        </button>
-                        <button class="btn btn-info"
-                                ng-if="$ctrl.answerContains(word)
-                                && $ctrl.wordInRightPlace(word)
-                                && !$ctrl.uniqueWord(word)"
-                                ng-click="$ctrl.updateAnswer(word)">
-                            {{ word }}
-                        </button>
-                        <button class="btn btn-warning" 
-                                ng-if="$ctrl.answerContains(word) 
-                                && !$ctrl.wordInRightPlace(word)"
-                                ng-click="$ctrl.updateAnswer(word)">
-                            {{ word }}
-                        </button>
-                        <button class="btn btn-default" ng-if="!$ctrl.answerContains(word)" ng-click="$ctrl.updateAnswer(word)">{{ word }}</button>
+                        <button class="btn btn-success" ng-if="$ctrl.isGreen(word)" ng-click="$ctrl.updateAnswer(word)">{{ word }} </button>
+                        <button class="btn btn-info" ng-if="$ctrl.isBlue(word)" ng-click="$ctrl.updateAnswer(word)">{{ word }} </button>
+                        <button class="btn btn-warning" ng-if="$ctrl.isOrange(word)" ng-click="$ctrl.updateAnswer(word)">{{ word }} </button>
+                        <button class="btn btn-default" ng-if="$ctrl.isWhite(word)" ng-click="$ctrl.updateAnswer(word)">{{ word }}</button>
                     </li>
                 </ul>
             </fieldset>
@@ -73,7 +56,7 @@
             </fieldset>
         </div>
         <div class="form-group row">
-            <span class="form-control" contenteditable="true" placeholder="Enter answer" ng-model="$ctrl.answer" ng-change="$ctrl.checkInput()"></span>
+            <span id="inputSpan" class="form-control" contenteditable="true" placeholder="Enter answer" ng-model="$ctrl.answer" ng-change="$ctrl.checkInput()"></span>
             <br />
             <button id="submitBtn" ng-click="$ctrl.checkAnswer()" class="btn btn-success">Next!</button>
         </div>

@@ -10,16 +10,16 @@
             <h4>Button colours</h4>
             <ul class="list-unstyled list-inline">
                 <li>
-                    <label class="label label-success">Correct!</label>
+                    <h4><label class="label label-success">Correct!</label></h4>
                 </li>
                 <li>
-                    <label class="label label-info">More than one!</label>
+                    <h4><label class="label label-info">Can be clicked again!</label></h4>
                 </li>
                 <li>
-                    <label class="label label-warning">Wrong place!</label>
+                    <h4><label class="label label-warning">Wrong place!</label></h4>
                 </li>
                 <li>
-                    <label class="label label-danger">Incorrect!</label>
+                    <h4><label class="label label-danger">Incorrect!</label></h4>
                 </li>
             </ul>
             <hr />
@@ -29,38 +29,19 @@
         <button id="startBtn" class="btn btn-success disabled" ng-click="$ctrl.startQuiz()">Start!</button>
     </div>
     <div id="quizDiv" class="hidden">
-        <h3><label id="labelCorrect" class="label label-default">Correct sentence: {{$ctrl.correct}}</label></h3>
+        <h3><label id="correctAnswerLabel" class="label label-default">Correct sentence: {{$ctrl.correctAnswer}}</label></h3>
         <h3><label class="label label-default" id="scoreLabel">Score: {{$ctrl.score}} / {{$ctrl.count}}</label></h3>
         <div id="questionDiv">
-            <h2>{{$ctrl.answer}}</h2>
+            <h3>{{$ctrl.answer}}</h3>
         </div>
         <div>
             <ul class="list-unstyled list-inline list-group">
                 <li ng-repeat="mark in $ctrl.punctuationMarks track by $index">
-                    <button class="btn btn-success btn-lg" ng-click="$ctrl.updateAnswer(mark)"
-                            ng-if="$ctrl.answerContains(mark)
-                                && $ctrl.inRightPlace(mark)
-                                && $ctrl.isUnique(mark)">
-                        {{mark}}
-                    </button>
-                    <button class="btn btn-info btn-lg" ng-click="$ctrl.updateAnswer(mark)"
-                            ng-if="$ctrl.answerContains(mark)
-                                && $ctrl.inRightPlace(mark)
-                                && !$ctrl.isUnique(mark)">
-                        {{mark}}
-                    </button>
-                    <button class="btn btn-warning btn-lg" ng-click="$ctrl.updateAnswer(mark)"
-                            ng-if="$ctrl.answerContains(mark)
-                                && !$ctrl.inRightPlace(mark)
-                                && $ctrl.correctContains(mark)">
-                        {{mark}}
-                    </button> 
-                    <button class="btn btn-danger btn-lg" ng-click="$ctrl.updateAnswer(mark)"
-                            ng-if="$ctrl.answerContains(mark)
-                                && !$ctrl.correctContains(mark)">
-                        {{mark}}
-                    </button> 
-                    <button ng-if="!$ctrl.answerContains(mark)" class="btn btn-default btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
+                    <button ng-if="$ctrl.isGreen(mark)" class="btn btn-success btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
+                    <button ng-if="$ctrl.isBlue(mark)" class="btn btn-info btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
+                    <button ng-if="$ctrl.isOrange(mark)" class="btn btn-warning btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
+                    <button ng-if="$ctrl.isRed(mark)" class="btn btn-danger btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
+                    <button ng-if="$ctrl.isWhite(mark)" class="btn btn-default btn-lg" ng-click="$ctrl.updateAnswer(mark)">{{mark}}</button>
                 </li>
             </ul>
         </div>
