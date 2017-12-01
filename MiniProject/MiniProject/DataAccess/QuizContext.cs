@@ -10,6 +10,7 @@ namespace MiniProject.DataAccess
     public class QuizContext : DbContext
     {
         public DbSet<Sentence> Sentences { get; set; }
+        public DbSet<HighScore> HighScores { get; set; }
 
         public QuizContext() : base("DefaultConnection") {}
     }

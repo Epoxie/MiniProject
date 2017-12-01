@@ -21,6 +21,16 @@ namespace MiniProject.Repositories
             return context.Sentences.ToList().Select(s => s.ToString());
         }
 
+        public IEnumerable<HighScore> GetAllHighScores()
+        {
+            return context.HighScores;
+        }
+
+        public void addHighScore(HighScore HighScore)
+        {
+            context.HighScores.Add(HighScore);
+            context.SaveChanges();
+        }
 
         //
     }
