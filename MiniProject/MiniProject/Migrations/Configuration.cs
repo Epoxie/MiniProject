@@ -22,7 +22,7 @@ namespace MiniProject.Migrations
                 new Sentence { SentenceID = 3, SentenceWords = "This is madness!" },
                 new Sentence { SentenceID = 4, SentenceWords = "How much wood would a woodchuck chuck if a woodchuck could chuck wood?" },
                 new Sentence { SentenceID = 5, SentenceWords = "A woodchuck would chuck as much wood as a woodchuck could chuck if a woodchuck could chuck wood." },
-                new Sentence { SentenceID = 6, SentenceWords = "Where’s the peck of pickled peppers Peter Piper picked?" }
+                new Sentence { SentenceID = 6, SentenceWords = "Where's the peck of pickled peppers Peter Piper picked?" }
                 );
         }
     }
