@@ -170,6 +170,7 @@
 
             // Check the answer
             vm.checkAnswer = function () {
+                document.getElementById("submitBtn").disabled = "disabled";
                 removeFromElementClassList("scoreLabel", ["label-success", "label-warning", "label-danger"])  
 
                 // cancel the timer
@@ -189,6 +190,7 @@
 
                     addToElementClassList("scoreLabel", ["label-success"]);
                     vm.score++;
+                    sessionStorage.highScore++;
                 }
                 else { // if answer is incorrect 
                     vm.correctAnswer = answer;
@@ -196,6 +198,7 @@
                     // Checks if there are any invalid words
                     if (vm.invalidWords && vm.invalidWords.length) {
                         vm.score--;
+                        sessionStorage.highScore--;
                         addToElementClassList("scoreLabel", ["label-danger"]);
                     }
                     else {
@@ -211,7 +214,7 @@
                     var interval = setInterval(function myfunction() {
                         clearInterval(interval); // clears interval
                         interval = null;
-                        if (sessionStorage.loopList.length > 1 || sessionStorage.loopList != null) {
+                        if (sessionStorage.loopList != null) {
                             var adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
                             sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
                             document.location.href = document.location.href.slice(0, document.location.href.indexOf("/Home")) + "/Home/" + adress; // sets the webpage to Home/adress
@@ -225,12 +228,20 @@
                 vm.invalidWords = null;
                 vm.answer = null;
                 vm.count++;
-
+                sessionStorage.answeredQuestions++;
 
                 // gets a new questions
                 if (sessionStorage.loopList == null) {
+                    var interval = setInterval(function myfunction() {
+                        clearInterval(interval); // clears interval
+                        interval = null;
+                        document.getElementById("submitBtn").disabled = "";
+                    }, 500);
                     getRandomQuestion();
                 }
+
+                if (sessionStorage.loopList.length < 1)
+                    sessionStorage.removeItem("loopList");
 
                 // new timer
                 timer = $interval(vm.checkAnswer, time);
@@ -238,12 +249,19 @@
 
             // Will be called when controller div is initialised
             vm.init = function () {
+                if (sessionStorage.loopList != null)
+                {
+                    vm.score = parseInt(sessionStorage.highScore);
+                    vm.Maxcount = parseInt(sessionStorage.answeredQuestions);
+                    vm.count = parseInt(sessionStorage.answeredQuestions);
+                }
+                else
+                    vm.Maxcount = sessionStorage.sentenceVar - 1;
                 removeFromElementClassList("sentenceDiv", ["hidden"]);
-                vm.Maxcount = sessionStorage.sentenceVar - 1;
                 vm.getData();
 
             };
-
+            
             // Gets the sentences from the database
             vm.getData = function () {
                 $http.get("/api/sentences/get")

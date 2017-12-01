@@ -9,13 +9,23 @@
         } */ // currently unused code
 
         $scope.animalInit = function () {
-            $scope.totalAttempts = sessionStorage.animalVar;
+            if (sessionStorage.loopList != null)
+            {
+                $scope.totalAttempts = (parseInt(sessionStorage.answeredQuestions) + 1);
+                document.getElementById("score").innerHTML = "Total Score: " + sessionStorage.highScore + " of " + sessionStorage.answeredQuestions;
+                if (sessionStorage.loopList.length < 1)
+                    sessionStorage.removeItem("loopList");
+            }
+            else
+            {
+                $scope.totalAttempts = parseInt(sessionStorage.animalVar);
+                sessionStorage.highScore = 0;
+                sessionStorage.answeredQuestions = 0;
+            }
             $scope.randomAnimal();
         }
 
-        $scope.currentAttempt = 1;
         $scope.interval; // the timer used later
-        $scope.score = 0; // number of successfull attempts
 
         $scope.animalNames = ["Horse", "Dog", "Cat", "Elephant", "Giraffe", "Eagle", "Ostrich"]
 
@@ -54,11 +64,12 @@
                 if($scope.correctAnswer == answer)
                 {
                     document.getElementById("response").innerHTML = "Correct! You get 1 point!";
-                    $scope.score += 1;
+                    sessionStorage.highScore++;
                 }
                 else
                     document.getElementById("response").innerHTML = "Wrong! The Correct answer is: " + $scope.alternatives[$scope.correctAnswer];
-                document.getElementById("score").innerHTML = "Total Score: " + $scope.score + " of " + $scope.currentAttempt;
+                sessionStorage.answeredQuestions++;
+                document.getElementById("score").innerHTML = "Total Score: " + sessionStorage.highScore + " of " + sessionStorage.answeredQuestions;
                 $scope.shortTimer();
             }
         }
@@ -67,22 +78,17 @@
             $scope.interval = setInterval(function myfunction() {
                 clearInterval($scope.interval); // clears interval
                 $scope.interval = null; // makes sure interval is null for the if statement above to work
-                if ($scope.totalAttempts == $scope.currentAttempt) { // checks if the desired number of questions have been attempted
+                if ($scope.totalAttempts == sessionStorage.answeredQuestions) { // checks if the desired number of questions have been attempted
                     $scope.return();
                 }
-                else {
-                    $scope.currentAttempt += 1; // increments so that the previous statement will be true at some point
-                }
-                $scope.randomAnimal(); // randomises animal for next question
+                else
+                    $scope.randomAnimal();
                 $scope.$apply(); // updates the bindings
             }, 1000);
         }
 
         $scope.return = function () { // sets the webbpage to be that of homecontroller index or whatever default
-            alert(sessionStorage.loopList);
-            alert(sessionStorage.loopList != null);
-            alert(sessionStorage.loopList == null);
-            if (sessionStorage.loopList.length > 1 || sessionStorage.loopList != null)
+            if (sessionStorage.loopList != null)
             {
                 $scope.adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
                 sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'

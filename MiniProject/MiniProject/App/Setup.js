@@ -16,8 +16,8 @@
 
         $scope.startRandom = function () {
             $scope.randomList();
-            sessionStorage.animalVar = 1;
-            sessionStorage.sentenceVar = 1;
+            sessionStorage.answeredQuestions = 0;
+            sessionStorage.highScore = 0;
             $scope.adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
             sessionStorage.loopList = sessionStorage.loopList.slice(sessionStorage.loopList.indexOf("/") + 1); // removes that first adress and the '/'
             document.location.href = document.location.href + "/Home/" + $scope.adress; // sets the webpage to Home/adress
@@ -35,6 +35,7 @@
             sessionStorage.removeItem("loopList");
             sessionStorage.removeItem("animalVar");
             sessionStorage.removeItem("sentenceVar");
+            document.getElementById("highScore").innerHTML = "Current HighScore: " + sessionStorage.highScore;
         }
 
     }
