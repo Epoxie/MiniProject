@@ -140,19 +140,20 @@
                     .then(function (response) {
                         originalSentences = response.data;
                         sentences = shuffleArray(angular.copy(originalSentences));
-                        removeFromElementClassList("startBtn", ["disabled"]);
 
-                        // If random quiz
                         if (sessionStorage.loopList != null) {
-                            addToElementClassList("startBtn", ["hidden"]);
+                            vm.score = parseInt(sessionStorage.highScore);
+                            vm.Maxcount = parseInt(sessionStorage.answeredQuestions);
+                            vm.count = parseInt(sessionStorage.answeredQuestions);
                             removeFromElementClassList("quizDiv", ["hidden"]);
+                            addToElementClassList("startBtn", ["hidden"]);
                             getRandomQuestion();
-
-                            // 30 seconds until it automatically goes to a new question
-                            timer = $interval(vm.checkAnswer, time);
                         }
                         else {
-                            // something else
+                            if (sessionStorage.sentenceVar != null) {
+                                vm.Maxcount = (parseInt(sessionStorage.sentenceVar) - 1);
+                            }
+                            removeFromElementClassList("startBtn", ["disabled"]);
                         }
                     });
             };
@@ -298,38 +299,17 @@
 
             // Will be called when controller div is initialised
             vm.init = function () {
-                if (sessionStorage.loopList != null) {
-                    vm.score = parseInt(sessionStorage.highScore);
-                    vm.Maxcount = parseInt(sessionStorage.answeredQuestions);
-                    vm.count = parseInt(sessionStorage.answeredQuestions);
-                }
-                else
-                {
-                    vm.Maxcount = (parseInt(sessionStorage.sentenceVar) - 1);
-                    console.log(vm.Maxcount);
-                }
                 removeFromElementClassList("sentenceDiv", ["hidden"]);
                 getData();
 
             };
 
-            // Gets the sentences from the database
-            vm.getData = function () {
-                $http.get("/api/sentences/get")
-                    .then(function (response) {
-                        originalSentences = response.data;
-                        sentences = shuffleArray(angular.copy(originalSentences));
-                        removeFromElementClassList("startBtn", ["disabled"]);
-
-                        // If random quiz
-                        if (sessionStorage.loopList != null) {
-                            addToElementClassList("startBtn", ["hidden"]);
-                            removeFromElementClassList("quizDiv", ["hidden"]);
-                            getRandomQuestion();
-                        }
-                    });
-            }
-            }]);
+            vm.startQuiz = function () {
+                getRandomQuestion();
+                addToElementClassList("startBtn", ["hidden"]);
+                removeFromElementClassList("quizDiv", ["hidden"]);
+            };
+    }]);
 
     // To make ng-model and ng-change work with contenteditable elements
     app.directive("contenteditable", function () {
