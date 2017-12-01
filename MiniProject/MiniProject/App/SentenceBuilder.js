@@ -95,10 +95,11 @@
                 vm.invalidWords = null;
                 vm.answer = null;
                 answer = null;
-                vm.shuffledWords = [];
+            vm.shuffledWords = [];
 
                 // Moved this down here, and changed it a little so there wouldn't be an extra 1 second until redirecting
                 // return
+            sessionStorage.answeredQuestions++;
                 if (vm.count == vm.Maxcount) {
                     if (sessionStorage.loopList != null && sessionStorage.loopList.length > 1) {
                         var adress = sessionStorage.loopList.slice(0, sessionStorage.loopList.indexOf("/")) // becomes the first adress without the '/'
@@ -118,6 +119,8 @@
                         }
                         removeFromElementClassList(btns[i].getAttribute("id"), ["disabled"]);
                     };
+
+
                     // Re-enable the contenteditable span
                     var inputSpan = document.getElementById("inputSpan");
                     inputSpan.innerHTML = "";
@@ -129,6 +132,7 @@
                     // new timer
                     timer = $interval(vm.checkAnswer, time);
                 }
+                vm.count++;
             };
             // Gets the sentences from the database
             var getData = function () {
@@ -170,10 +174,10 @@
             // functions to set the colour of the buttons
             vm.isGreen = function (word) {
                 return answerContains(word) && inRightPlace(word) && isUnique(word);
-            };
+                };
             vm.isBlue = function (word) {
                 return answerContains(word) && inRightPlace(word) && !isUnique(word);
-            };
+                };
             vm.isOrange = function (word) {
                 return answerContains(word) && !inRightPlace(word);
             };
@@ -203,7 +207,7 @@
                     vm.checkAnswer();
                 }
                 else {
-                    vm.checkInput();
+                vm.checkInput();
                 }
             };
 
@@ -252,8 +256,8 @@
                 };
 
                 // reset the scoreLabel
-                removeFromElementClassList("scoreLabel", ["label-success", "label-warning", "label-danger"])
-                
+                removeFromElementClassList("scoreLabel", ["label-success", "label-warning", "label-danger"])  
+
                 // disable the contenteditable span
                 var inputSpan = document.getElementById("inputSpan");
                 inputSpan.setAttribute("contenteditable", "false");
@@ -267,18 +271,19 @@
                 }
                 vm.answer = vm.answer.trim();
                 vm.correctAnswer = answer;
-                vm.count++;
 
                 // If answer is correct
                 if (vm.answer == answer) {
                     addToElementClassList("scoreLabel", ["label-success"]);
                     addToElementClassList("correctAnswerLabel", ["label-success"]);
                     vm.score++;
+                    sessionStorage.highScore++;
                 }
                 else { // if answer is incorrect 
                     // Checks if there are any invalid words
                     if (vm.invalidWords && vm.invalidWords.length) {
                         vm.score--;
+                        sessionStorage.highScore--;
                         addToElementClassList("scoreLabel", ["label-danger"]);
                         addToElementClassList("correctAnswerLabel", ["label-danger"]);
                     }
@@ -287,28 +292,44 @@
                         addToElementClassList("correctAnswerLabel", ["label-warning"]);
                     }
                 }
-                // new timer
+
                 timer = $interval(getNewRandomQuestion, 1000);
-            };
-
-            // Starts the quiz (duh)
-            vm.startQuiz = function () {
-                addToElementClassList("startBtn", ["hidden"]);
-                removeFromElementClassList("quizDiv", ["hidden"]);
-                getRandomQuestion();
-
-                // 30 seconds until it automatically goes to a new question
-                timer = $interval(vm.checkAnswer, time);
             };
 
             // Will be called when controller div is initialised
             vm.init = function () {
+                if (sessionStorage.loopList != null) {
+                    vm.score = parseInt(sessionStorage.highScore);
+                    vm.Maxcount = parseInt(sessionStorage.answeredQuestions);
+                    vm.count = parseInt(sessionStorage.answeredQuestions);
+                }
+                else
+                {
+                    vm.Maxcount = (parseInt(sessionStorage.sentenceVar) - 1);
+                    console.log(vm.Maxcount);
+                }
                 removeFromElementClassList("sentenceDiv", ["hidden"]);
-                vm.Maxcount = sessionStorage.sentenceVar;
                 getData();
 
             };
-        }]);
+
+            // Gets the sentences from the database
+            vm.getData = function () {
+                $http.get("/api/sentences/get")
+                    .then(function (response) {
+                        originalSentences = response.data;
+                        sentences = shuffleArray(angular.copy(originalSentences));
+                        removeFromElementClassList("startBtn", ["disabled"]);
+
+                        // If random quiz
+                        if (sessionStorage.loopList != null) {
+                            addToElementClassList("startBtn", ["hidden"]);
+                            removeFromElementClassList("quizDiv", ["hidden"]);
+                            getRandomQuestion();
+                        }
+                    });
+            }
+            }]);
 
     // To make ng-model and ng-change work with contenteditable elements
     app.directive("contenteditable", function () {
