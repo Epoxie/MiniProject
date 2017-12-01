@@ -201,10 +201,10 @@
             // TODO: fix
             // Update the answer when clicking the word buttons
             vm.updateAnswer = function (mark) {
-                if (answerContains(mark) && (isUnique(mark) || !inRightPlace(mark))) {
+                if (vm.isOrange(mark) || vm.isRed(mark)) {
                     vm.answer = vm.answer.replace(mark, "*");
                 }
-                else {
+                else if(!vm.isGreen(mark)) {
                     vm.answer = vm.answer.replace("*", mark);
                 }
 

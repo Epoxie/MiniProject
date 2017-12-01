@@ -191,10 +191,10 @@
                 var words = vm.answer.replace("&nbsp;", " ").split(" ");
                 var index = words.lastIndexOf(word);
 
-                if (index >= 0 && (!inRightPlace(word) || isUnique(word))) {
-                    words.splice(index, 1);
+                if (index >= 0 && vm.isOrange(word)) {
+                    words.splice(index, 1)
                 }
-                else {
+                else if(!vm.isGreen(word)) {
                     words.push(word);
                 }
 
